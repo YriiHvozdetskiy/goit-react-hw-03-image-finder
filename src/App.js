@@ -4,6 +4,7 @@ import { ImageGallery } from './components/ImageGallery';
 import { Searchbar } from './components/Searchbar';
 import { Button } from './components/Button';
 import { Api } from './components/api';
+import { Modal } from './components/Modal';
 
 const apiImages = new Api();
 
@@ -11,6 +12,8 @@ export class App extends Component {
   state = {
     searchImages: [],
     loading: false,
+    description: null,
+    selectedImage: null,
   };
 
   searchbar = async value => {
@@ -22,7 +25,6 @@ export class App extends Component {
     const img = await apiImages
       .fetchImage()
       .finally(() => this.setState({ loading: false }));
-    // console.log('img-searchbar', img);
 
     this.setState({ searchImages: img });
   };
@@ -33,7 +35,6 @@ export class App extends Component {
     const img = await apiImages
       .fetchImage()
       .finally(() => this.setState({ loading: false }));
-    // console.log('img-loadMore', img);
 
     this.setState(prevState => {
       return { searchImages: [...prevState.searchImages, ...img] };
@@ -45,8 +46,17 @@ export class App extends Component {
     });
   };
 
+  openModal = (selectedImage, description) => {
+    this.setState({ selectedImage });
+    this.setState({ description });
+  };
+
+  closeModal = () => {
+    this.setState({ selectedImage: null });
+  };
+
   render() {
-    const { searchImages, loading } = this.state;
+    const { searchImages, loading, selectedImage, description } = this.state;
     return (
       <>
         <Searchbar onSubmit={this.searchbar} />
@@ -60,9 +70,14 @@ export class App extends Component {
             width={200}
           />
         )}
-        <ImageGallery value={searchImages} />
+        <ImageGallery value={searchImages} openModal={this.openModal} />
 
         {searchImages.length !== 0 && <Button onClick={this.loadMore} />}
+        {selectedImage && (
+          <Modal closeModal={this.closeModal}>
+            <img src={selectedImage} alt={description} />
+          </Modal>
+        )}
       </>
     );
   }
