@@ -3,7 +3,7 @@ import Loader from 'react-loader-spinner';
 import { ImageGallery } from './components/ImageGallery';
 import { Searchbar } from './components/Searchbar';
 import { Button } from './components/Button';
-import { Api } from './components/api';
+import { Api } from './api';
 import { Modal } from './components/Modal';
 
 const apiImages = new Api();
